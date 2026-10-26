@@ -94,12 +94,30 @@
         "OBS_CODESIGN_IDENTITY": {"type": "STRING", "value": "$penv{CODESIGN_IDENT}"},
         "OBS_CODESIGN_TEAM": {"type": "STRING", "value": "$penv{CODESIGN_TEAM}"},
         "OBS_PROVISIONING_PROFILE": {"type": "STRING", "value": "$penv{PROVISIONING_PROFILE}"},
-        "VIRTUALCAM_DEVICE_UUID": {"type": "STRING", "value": "7626645E-4425-469E-9D8B-97E0FA59AC75"},
-        "VIRTUALCAM_SINK_UUID": {"type": "STRING", "value": "A3F16177-7044-4DD8-B900-72E2419F7A9A"},
-        "VIRTUALCAM_SOURCE_UUID": {"type": "STRING", "value": "A8D7B8AA-65AD-4D21-9C42-66480DBFA8E1"},
+        "VIRTUALCAM_DEVICE_UUID": {"type": "STRING", "value": "FF3D2A20-FD26-5C54-8307-F18FFCC3B11E"},
+        "VIRTUALCAM_SINK_UUID": {"type": "STRING", "value": "CD42EC7D-7C9C-51F3-86F5-3B2C25BFFB5F"},
+        "VIRTUALCAM_SOURCE_UUID": {"type": "STRING", "value": "8CCE3F5E-FA0C-57FA-A666-C23007DAC772"},
         "SPARKLE_APPCAST_URL": {"type": "STRING", "value": "https://obsproject.com/osx_update/updates_$(ARCHS)_v2.xml"},
         "SPARKLE_PUBLIC_KEY": {"type": "STRING", "value": "HQ5/Ba9VHOuEWaM0jtVjZzgHKFJX9YTl+HNVpgNF0iM="},
         "ENABLE_BROWSER": true
+      }
+    },
+    {
+      "name": "macos-webcam",
+      "displayName": "OBS Webcam (macOS)",
+      "inherits": [
+        "macos"
+      ],
+      "binaryDir": "${sourceDir}/build_webcam",
+      "cacheVariables": {
+        "CMAKE_OSX_ARCHITECTURES": "arm64",
+        "SPARKLE_APPCAST_URL": "",
+        "SPARKLE_PUBLIC_KEY": "",
+        "OBS_CODESIGN_TEAM": "$penv{CODESIGN_TEAM}",
+        "ENABLE_VIRTUALCAM": true,
+        "VIRTUALCAM_DEVICE_UUID": "FF3D2A20-FD26-5C54-8307-F18FFCC3B11E",
+        "VIRTUALCAM_SOURCE_UUID": "8CCE3F5E-FA0C-57FA-A666-C23007DAC772",
+        "VIRTUALCAM_SINK_UUID": "CD42EC7D-7C9C-51F3-86F5-3B2C25BFFB5F"
       }
     },
     {

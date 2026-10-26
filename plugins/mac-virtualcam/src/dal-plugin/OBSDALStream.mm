@@ -151,19 +151,6 @@
 - (NSImage *)testCardImage
 {
     if (_testCardImage == nil) {
-        NSString *bundlePath = [[NSBundle bundleForClass:[OBSDALStream class]] bundlePath];
-        NSString *placeHolderPath = [bundlePath stringByAppendingString:@"/Contents/Resources/placeholder.png"];
-        NSFileManager *fileManager = [NSFileManager defaultManager];
-        NSURL *homeUrl = [fileManager homeDirectoryForCurrentUser];
-        NSURL *customUrl =
-            [homeUrl URLByAppendingPathComponent:
-                         @"Library/Application Support/obs-studio/plugin_config/mac-virtualcam/placeholder.png"];
-        NSString *customPlaceHolder = customUrl.path;
-        if ([fileManager isReadableFileAtPath:customPlaceHolder])
-            placeHolderPath = customPlaceHolder;
-        DLog(@"PlaceHolder:%@", placeHolderPath);
-        NSImage *placeholderImage = [[NSImage alloc] initWithContentsOfFile:placeHolderPath];
-
         NSBitmapImageRep *rep = [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:NULL
                                                                         pixelsWide:(NSInteger) self.testCardSize.width
                                                                         pixelsHigh:(NSInteger) self.testCardSize.height
@@ -176,17 +163,6 @@
                                                                       bitsPerPixel:0];
         rep.size = self.testCardSize;
 
-        double hScale = placeholderImage.size.width / self.testCardSize.width;
-        double vScale = placeholderImage.size.height / self.testCardSize.height;
-
-        double scaling = fmax(hScale, vScale);
-
-        double newWidth = placeholderImage.size.width / scaling;
-        double newHeight = placeholderImage.size.height / scaling;
-
-        double leftOffset = (self.testCardSize.width - newWidth) / 2;
-        double topOffset = (self.testCardSize.height - newHeight) / 2;
-
         [NSGraphicsContext saveGraphicsState];
         [NSGraphicsContext setCurrentContext:[NSGraphicsContext graphicsContextWithBitmapImageRep:rep]];
 
@@ -194,9 +170,6 @@
         [backgroundColor set];
         NSRectFill(NSMakeRect(0, 0, self.testCardSize.width, self.testCardSize.height));
 
-        [placeholderImage drawInRect:NSMakeRect(leftOffset, topOffset, newWidth, newHeight) fromRect:NSZeroRect
-                           operation:NSCompositingOperationCopy
-                            fraction:1.0];
         [NSGraphicsContext restoreGraphicsState];
 
         NSImage *testCardImage = [[NSImage alloc] initWithSize:self.testCardSize];
@@ -426,11 +399,11 @@
 {
     switch (address.mSelector) {
         case kCMIOObjectPropertyName:
-            *static_cast<CFStringRef *>(data) = CFSTR("OBS Virtual Camera");
+            *static_cast<CFStringRef *>(data) = CFSTR("Logitech C920 HD Pro Webcam");
             *dataUsed = sizeof(CFStringRef);
             break;
         case kCMIOObjectPropertyElementName:
-            *static_cast<CFStringRef *>(data) = CFSTR("OBS Virtual Camera Stream Element");
+            *static_cast<CFStringRef *>(data) = CFSTR("Webcam Video Element");
             *dataUsed = sizeof(CFStringRef);
             break;
         case kCMIOObjectPropertyManufacturer:

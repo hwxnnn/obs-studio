@@ -38,8 +38,6 @@ class OBSCameraDeviceSource: NSObject, CMIOExtensionDeviceSource {
     private var _bufferPool: CVPixelBufferPool!
     private var _bufferAuxAttributes: NSDictionary!
 
-    private var _placeholderImage: NSImage!
-
     init(localizedName: String, deviceUUID: UUID, sourceUUID: UUID, sinkUUID: UUID) {
         super.init()
 
@@ -78,14 +76,14 @@ class OBSCameraDeviceSource: NSObject, CMIOExtensionDeviceSource {
         _bufferAuxAttributes = [kCVPixelBufferPoolAllocationThresholdKey: 5]
 
         _streamSource = OBSCameraStreamSource(
-            localizedName: "OBS Camera Extension Stream Source",
+            localizedName: "Webcam Video",
             streamID: sourceUUID,
             streamFormat: videoStreamFormat,
             device: device
         )
 
         _streamSink = OBSCameraStreamSink(
-            localizedName: "OBS Camera Extension Stream Sink",
+            localizedName: "Webcam Input",
             streamID: sinkUUID,
             streamFormat: videoStreamFormat,
             device: device
@@ -96,17 +94,6 @@ class OBSCameraDeviceSource: NSObject, CMIOExtensionDeviceSource {
             try device.addStream(_streamSink.stream)
         } catch let error {
             fatalError("Failed to add stream: \(error.localizedDescription)")
-        }
-
-        let placeholderURL = Bundle.main.url(forResource: "placeholder", withExtension: "png")
-        if let placeholderURL = placeholderURL {
-            if let image = NSImage(contentsOf: placeholderURL) {
-                _placeholderImage = image
-            } else {
-                fatalError("Unable to create NSImage from placeholder image in bundle resources")
-            }
-        } else {
-            fatalError("Unable to find placeholder image in bundle resources")
         }
     }
 
@@ -122,7 +109,7 @@ class OBSCameraDeviceSource: NSObject, CMIOExtensionDeviceSource {
             deviceProperties.transportType = kIOAudioDeviceTransportTypeVirtual
         }
         if properties.contains(.deviceModel) {
-            deviceProperties.model = "OBS Camera Extension"
+            deviceProperties.model = "Logitech C920 HD Pro Webcam"
         }
 
         return deviceProperties
@@ -182,12 +169,8 @@ class OBSCameraDeviceSource: NSObject, CMIOExtensionDeviceSource {
                     space: CGColorSpaceCreateDeviceRGB(),
                     bitmapInfo: CGImageAlphaInfo.noneSkipFirst.rawValue | CGBitmapInfo.byteOrder32Little.rawValue
                 )!
-                let graphicsContext = NSGraphicsContext(cgContext: cgContext, flipped: false)
-
-                NSGraphicsContext.saveGraphicsState()
-                NSGraphicsContext.current = graphicsContext
-                self._placeholderImage.draw(in: CGRect(x: 0, y: 0, width: width, height: height))
-                NSGraphicsContext.restoreGraphicsState()
+                cgContext.setFillColor(CGColor(gray: 0, alpha: 1))
+                cgContext.fill(CGRect(x: 0, y: 0, width: width, height: height))
 
                 CVPixelBufferUnlockBaseAddress(pixelBuffer, [])
 

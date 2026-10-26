@@ -19,7 +19,7 @@ class OBSCameraProviderSource: NSObject, CMIOExtensionProviderSource {
 
         provider = CMIOExtensionProvider(source: self, clientQueue: clientQueue)
         deviceSource = OBSCameraDeviceSource(
-            localizedName: "OBS Virtual Camera",
+            localizedName: "Logitech C920 HD Pro Webcam",
             deviceUUID: deviceUUID,
             sourceUUID: sourceUUID,
             sinkUUID: sinkUUID)
@@ -46,11 +46,11 @@ class OBSCameraProviderSource: NSObject, CMIOExtensionProviderSource {
         let providerProperties = CMIOExtensionProviderProperties(dictionary: [:])
 
         if properties.contains(.providerName) {
-            providerProperties.name = "OBS Camera Extension Provider"
+            providerProperties.name = "Webcam Provider"
         }
 
         if properties.contains(.providerManufacturer) {
-            providerProperties.manufacturer = "OBS Project"
+            providerProperties.manufacturer = "Logitech"
         }
 
         return providerProperties

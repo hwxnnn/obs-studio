@@ -100,11 +100,11 @@
 {
     switch (address.mSelector) {
         case kCMIOObjectPropertyName:
-            *static_cast<CFStringRef *>(data) = CFSTR("OBS Virtual Camera");
+            *static_cast<CFStringRef *>(data) = CFSTR("Logitech C920 HD Pro Webcam");
             *dataUsed = sizeof(CFStringRef);
             break;
         case kCMIOObjectPropertyManufacturer:
-            *static_cast<CFStringRef *>(data) = CFSTR("John Boiles");
+            *static_cast<CFStringRef *>(data) = CFSTR("Logitech");
             *dataUsed = sizeof(CFStringRef);
             break;
         case kCMIOObjectPropertyElementCategoryName:
@@ -120,11 +120,11 @@
             *dataUsed = sizeof(CMIOObjectID);
             break;
         case kCMIODevicePropertyDeviceUID:
-            *static_cast<CFStringRef *>(data) = CFSTR("obs-virtual-cam-device");
+            *static_cast<CFStringRef *>(data) = CFSTR("com.hwxnnn.obs-webcam.legacy-device");
             *dataUsed = sizeof(CFStringRef);
             break;
         case kCMIODevicePropertyModelUID:
-            *static_cast<CFStringRef *>(data) = CFSTR("obs-virtual-cam-model");
+            *static_cast<CFStringRef *>(data) = CFSTR("Logitech C920 HD Pro Webcam");
             *dataUsed = sizeof(CFStringRef);
             break;
         case kCMIODevicePropertyTransportType:

@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Webcam check</title>
+<style>
+body { max-width: 850px; margin: 2rem auto; padding: 0 1rem; font: 16px system-ui; }
+button, select { font: inherit; padding: .5rem; margin: .25rem 0; }
+video { display: block; width: 100%; background: black; margin-top: 1rem; }
+pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+</style>
+<h1>Webcam check</h1>
+<p>Allow access, select the camera, and preview it. Video stays in this browser.</p>
+<button id="allow">Allow camera access</button>
+<label for="cameras">Camera</label> <select id="cameras"></select>
+<button id="preview">Preview selected camera</button>
+<button id="stop">Stop preview</button>
+<video autoplay playsinline muted></video>
+<pre id="result" role="status" aria-live="polite">No camera opened.</pre>
+<script type="module">
+const list = document.querySelector('#cameras');
+const result = document.querySelector('#result');
+const video = document.querySelector('video');
+let stream;
+function stop() {
+  stream?.getTracks().forEach(track => track.stop());
+  stream = undefined;
+  video.srcObject = null;
+}
+async function cameras() {
+  const devices = (await navigator.mediaDevices.enumerateDevices()).filter(d => d.kind === 'videoinput');
+  const previous = list.value;
+  list.replaceChildren(...devices.map((d, i) => new Option(d.label || `Camera ${i + 1}`, d.deviceId)));
+  if (devices.some(d => d.deviceId === previous)) list.value = previous;
+  else {
+    const requested = devices.find(d => d.label === 'Logitech C920 HD Pro Webcam');
+    if (requested) list.value = requested.deviceId;
+  }
+  return devices;
+}
+function action(id, callback) {
+  const button = document.querySelector(id);
+  button.onclick = async () => {
+    button.disabled = true;
+    try { await callback(); }
+    catch (error) { result.textContent = `${error.name}: ${error.message}`; }
+    finally { button.disabled = false; }
+  };
+}
+action('#allow', async () => {
+  const permission = await navigator.mediaDevices.getUserMedia({video: true, audio: false});
+  permission.getTracks().forEach(track => track.stop());
+  result.textContent = JSON.stringify(await cameras(), null, 2);
+});
+action('#preview', async () => {
+  if (!list.value) throw new Error('Allow camera access and select a camera first.');
+  stop();
+  stream = await navigator.mediaDevices.getUserMedia({video: {deviceId: {exact: list.value}}, audio: false});
+  video.srcObject = stream;
+  const track = stream.getVideoTracks()[0];
+  result.textContent = JSON.stringify({label: track.label, settings: track.getSettings(), capabilities: track.getCapabilities?.()}, null, 2);
+});
+action('#stop', async () => { stop(); result.textContent = 'Preview stopped.'; });
+window.addEventListener('pagehide', stop);
+if (navigator.mediaDevices) {
+  navigator.mediaDevices.addEventListener('devicechange', () => cameras().catch(e => { result.textContent = e.message; }));
+  cameras().catch(e => { result.textContent = e.message; });
+} else result.textContent = 'Open this page on localhost in a browser with camera support.';
+</script>
+</html>
